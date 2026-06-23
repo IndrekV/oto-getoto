@@ -1,3 +1,7 @@
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
 # HTML pages: don't cache locally (deploys reflect immediately on next visit),
 # but cache on Netlify's edge for 24h with stale-while-revalidate. Netlify
 # auto-purges its CDN on every deploy.
