@@ -1,0 +1,4 @@
+# getoto.eu is a transactional/email domain, not a content site.
+# Keep it out of search indexes — the real site is https://heyoto.eu
+User-agent: *
+Disallow: /

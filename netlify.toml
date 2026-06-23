@@ -1,0 +1,21 @@
+# HTML pages: don't cache locally (deploys reflect immediately on next visit),
+# but cache on Netlify's edge for 24h with stale-while-revalidate. Netlify
+# auto-purges its CDN on every deploy.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Netlify-CDN-Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+
+# Content-hashed assets never change — cache for 1 year, immutable.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Netlify-CDN-Cache-Control = "public, max-age=31536000, immutable"
+
+# Static favicon (fixed filename, occasional updates).
+[[headers]]
+  for = "/favicon.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"

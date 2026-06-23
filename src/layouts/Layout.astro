@@ -1,0 +1,156 @@
+---
+import "../styles/global.css";
+import Background from "../components/shared/Background.astro";
+import CookieConsent from "../components/shared/CookieConsent.tsx";
+
+type Props = {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+};
+
+const SITE_URL = "https://getoto.eu";
+const DEFAULT_TITLE = "OTO — Prep your 1:1s in minutes. And make them count.";
+const DEFAULT_DESCRIPTION =
+  "OTO keeps templates, notes, and follow-ups in one place so managers can focus on leading, not prep. Try it free.";
+const DEFAULT_IMAGE = "/og-image.png";
+
+const {
+  title = DEFAULT_TITLE,
+  description = DEFAULT_DESCRIPTION,
+  image = DEFAULT_IMAGE,
+  // This is a transactional/email domain — keep it out of search indexes by
+  // default so it never competes with the real site at heyoto.eu.
+  noindex = true,
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, SITE_URL).toString();
+const imageUrl = image.startsWith("http")
+  ? image
+  : new URL(image, SITE_URL).toString();
+---
+
+<!doctype html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="preconnect" href="https://app.heyoto.eu" crossorigin />
+    <link rel="dns-prefetch" href="https://app.heyoto.eu" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OTO" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="OTO — the 1:1 meetings tool managers actually keep using" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+
+    <meta name="theme-color" content="#3B82F6" />
+    <meta name="apple-mobile-web-app-title" content="OTO" />
+    <meta name="application-name" content="OTO" />
+
+    <noscript>
+      <style>
+        .oto-motion {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style>
+    </noscript>
+  </head>
+  <body class="bg-background text-foreground antialiased">
+    <Background />
+    <div
+      class="min-h-screen flex flex-col items-center justify-center container mx-auto px-4 sm:px-6 lg:px-8 py-12"
+    >
+      <slot />
+    </div>
+    <CookieConsent client:load />
+    <script>
+      import { initAnalytics, analytics } from "../lib/analytics"
+      import { createPostHogProvider } from "../lib/providers/posthog"
+      import { getConsent, CONSENT_EVENT } from "../lib/consent"
+
+      const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY
+      const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST || "https://t.heyoto.eu"
+      const isPreview = import.meta.env.DEV
+
+      function ensureAnalytics() {
+        if (isPreview) return false
+        if (!posthogKey) return false
+        if (getConsent() !== "accepted") return false
+        if (!window.__analytics) {
+          initAnalytics(
+            createPostHogProvider({ apiKey: posthogKey, apiHost: posthogHost }),
+          )
+        }
+        return true
+      }
+
+      if (ensureAnalytics()) {
+        analytics.trackPageView()
+      }
+
+      window.addEventListener(CONSENT_EVENT, (event) => {
+        const detail = (event as CustomEvent<"accepted" | "declined">).detail
+        if (detail === "accepted" && ensureAnalytics()) {
+          analytics.trackPageView()
+        } else if (detail === "declined") {
+          analytics.reset()
+        }
+      })
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --background: 214 20% 98%;
+    --foreground: 214 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 214 30% 15%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 80% 72%;
+    --secondary-foreground: 217 80% 30%;
+
+    --muted: 214 10% 95%;
+    --muted-foreground: 214 10% 42%;
+
+    --border: 214 15% 89%;
+  }
+
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+</style>
