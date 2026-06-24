@@ -40,7 +40,7 @@ export function createPostHogProvider({
       ui_host: uiHost,
       // Pageviews are captured manually via `trackPageView` so callers can
       // attach custom metadata; otherwise the SDK would silently drop it.
-      // Astro is an MPA — every navigation is a full page load, so a single
+      // Astro is an MPA, so every navigation is a full page load and a single
       // call per init is all we need.
       capture_pageview: false,
       capture_pageleave: true,
@@ -50,7 +50,7 @@ export function createPostHogProvider({
         web_vitals: true,
         network_timing: true,
       },
-      // Session recording is intentionally disabled — heavy on PostHog quota
+      // Session recording is intentionally disabled: heavy on PostHog quota
       // and carries extra privacy surface area we don't currently need.
       disable_session_recording: true,
       persistence: "localStorage+cookie",
@@ -61,7 +61,7 @@ export function createPostHogProvider({
 
   // `opt_out_capturing` is persisted in PostHog's storage. If the visitor
   // previously declined and is now accepting again, the SDK would otherwise
-  // silently drop everything — re-opt-in on init.
+  // silently drop everything, so re-opt-in on init.
   if (posthog.has_opted_out_capturing()) {
     posthog.opt_in_capturing()
   }

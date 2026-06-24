@@ -19,7 +19,7 @@ export function setConsent(status: ConsentStatus) {
   try {
     window.localStorage.setItem(CONSENT_STORAGE_KEY, status)
   } catch {
-    // Ignore — storage may be unavailable (e.g. private mode, disabled cookies)
+    // Ignore: storage may be unavailable (e.g. private mode, disabled cookies)
   }
   window.dispatchEvent(new CustomEvent<ConsentStatus>(CONSENT_EVENT, { detail: status }))
 }

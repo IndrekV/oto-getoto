@@ -11,7 +11,7 @@ type Props = {
 };
 
 const SITE_URL = "https://getoto.eu";
-const DEFAULT_TITLE = "OTO — Prep your 1:1s in minutes. And make them count.";
+const DEFAULT_TITLE = "OTO: Prep your 1:1s in minutes. And make them count.";
 const DEFAULT_DESCRIPTION =
   "OTO keeps templates, notes, and follow-ups in one place so managers can focus on leading, not prep. Try it free.";
 const DEFAULT_IMAGE = "/og-image.png";
@@ -20,7 +20,7 @@ const {
   title = DEFAULT_TITLE,
   description = DEFAULT_DESCRIPTION,
   image = DEFAULT_IMAGE,
-  // This is a transactional/email domain — keep it out of search indexes by
+  // This is a transactional/email domain, kept out of search indexes by
   // default so it never competes with the real site at heyoto.eu.
   noindex = true,
 } = Astro.props;
@@ -57,7 +57,7 @@ const imageUrl = image.startsWith("http")
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="OTO — the 1:1 meetings tool managers actually keep using" />
+    <meta property="og:image:alt" content="OTO, the 1:1 meetings tool managers actually keep using" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalUrl} />
